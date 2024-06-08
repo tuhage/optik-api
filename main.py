@@ -1,7 +1,7 @@
 from typing import Union
 from fastapi import FastAPI, UploadFile, File
 import fitz  
-import optik_reader
+import optik_reader_yolo
 
 app = FastAPI()
 
@@ -18,5 +18,12 @@ async def read_pdf(file: UploadFile = File(...)):
                 pix = first_page.get_pixmap(matrix=fitz.Matrix(300 / 72, 300 / 72)) 
                 filename = "images/temp.png"
                 pix.save(filename)
-    result = optik_reader.read_optik_form()
+    result = optik_reader_yolo.read_optik_form()
+    return result
+
+@app.post("/read_image")
+async def read_image(file: UploadFile = File(...)):
+    with open("images/temp.png", "wb") as buffer:
+        buffer.write(file.file.read())
+    result = optik_reader_yolo.read_optik_form()
     return result
